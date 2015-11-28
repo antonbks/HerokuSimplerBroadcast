@@ -1,10 +1,17 @@
 var WebSocketServer = require("ws").Server
 var http = require("http")
+var Myo = require("myo")
 var express = require("express")
 var app = express()
 var port = process.env.PORT || 5000
 
 app.use(express.static(__dirname + "/"))
+
+Myo.connect("com.westernhacks.ledcube")
+
+Myo.on("connected", function(data, timestamp) {
+  console.log("Myo successfully connected. Data: " + JSON.stringify(data) + ". Timestamp: " + timestamp + ".");
+});
 
 var server = http.createServer(app)
 server.listen(port)
@@ -16,7 +23,7 @@ console.log("websocket server created")
 
 wss.on('connection', function connection(ws) {
 
-  ws.on('message', function incoming(message) 
+  ws.on('message', function incoming(message)
   {
     console.log('received: %s', message);
     wss.clients.forEach(function each(client) {
